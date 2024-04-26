@@ -1,0 +1,1 @@
+curl -X POST -H "Content-Type: application/json" -d '{"query":"query files { entityQuery(entityType: NODE, revisions: ALL, filter: { conditions: [{field: \"status\", value: [\"0\", \"1\"]}]}) { __typename items { id ... on NodeDemo { vid nid status moderationState title fieldImage { entity { filename uri } } } } } }"}' http://localhost:30007/graphql

@@ -1,0 +1,39 @@
+uuid: 6832b183-1c82-48f4-be9b-6b6e548c974e
+langcode: en
+status: true
+dependencies:
+  config:
+    - filter.format.basic_html
+  module:
+    - comment
+    - contact
+    - content_moderation
+    - file
+    - filter
+    - graphql
+    - node
+    - search
+    - shortcut
+    - system
+_core:
+  default_config_hash: cFrlqjtkTfvY3RGccjJkPf1SGIfJ942IrxTLWAO4mgA
+id: authenticated
+label: 'Authenticated user'
+weight: 1
+is_admin: false
+permissions:
+  - 'access comments'
+  - 'access content'
+  - 'access shortcuts'
+  - 'access site-wide contact form'
+  - 'bypass graphql access'
+  - 'delete own files'
+  - 'execute main arbitrary graphql requests'
+  - 'execute main persisted graphql requests'
+  - 'post comments'
+  - 'search content'
+  - 'skip comment approval'
+  - 'use text format basic_html'
+  - 'view any unpublished content'
+  - 'view latest version'
+  - 'view own unpublished content'

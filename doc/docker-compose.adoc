@@ -1,0 +1,111 @@
+:toc: macro
+= Running locally with docker-compose
+
+toc::[]
+== Prerequisites
+
+* docker
+* docker-compose 1.13.0+ https://docs.docker.com/compose/install/
+
+== Setup
+You can spin up Drupal and restore the backup with this script:
+
+----
+./quick-local-setup.sh
+----
+
+TIP: If you Firefox and don't have image in the Drupal UI, disable HTTPS-Only Mode for `http://localhost:30007`. Or use Chrome Browser.
+
+== Initial setup
+
+. Build or pull the images
+. Start docker-compose
+. Run the install script
+. Restore the backup with restore script
+. Fill Azure Mock Implementation with data
+
+==== Optional: Manually configure Azurite ====
+This step is mutually exclusive with the preconfigured setup.
+
+. Connect to the local blob storage using default Azurite credentials and the Azure Storage Explorer.
+.. Select `Local storage emulator` as resource type
+.. Change Account name to: `account1` and Account key to: `a2V5MQ==` otherwise keep the default values
+.. Retry on failure
+. Create a blob container named `public` and set the access level to `public on blob level only` (right click on the container -> `Set public access level`)
+
+==== Copy media content to local Azurite ====
+Copy the media content from the blob storage of your desire. Recommended is to copy from a fetched backup and utilizing `azcopy`.
+.. The required access rights for the azurite SAS-token are `Read, Write, List, Add, Create`
+.. Allow `http` access
+
+
+```shell
+azcopy copy "<project-root>/backup/latest/files/*" "http://127.0.0.1:10000/account1/public?<SAS signature>" --block-blob-tier hot --overwrite=prompt --from-to=LocalBlob --blob-type Detect --recursive --log-level=INFO;
+```
+
+
+TIP: An SAS signature can be generated from the Azure Storage Explorer, by right-clicking on the container and selecting `Get Shared Access Signature`.
+
+== Troubleshooting
+==== First Aid
+- Did you try to flush the cache?
+- Did you try to rebuild or re-pull your docker images?
+- Did you run the install script?
+- Did you use the Docker Desktop Kubernetes cluster recently? In this case it might help to restart docker desktop.
+
+==== Login unknown / not working?
+Pre-Configured login: As administrator with __Username__ `admin` and __Password__ `admin`. If that does not work (for what reasons ever), see link:https://www.drupal.org/node/44164[Recovering the administrator password]
+
+== Commands
+=== Docker Images
+
+----
+docker-compose pull
+----
+
+=== Starting
+
+----
+docker-compose up
+----
+
+=== Installation
+You have to run the Drupal installation manually after the first startup on a new setup.
+----
+docker-compose run --rm php /mnt/scripts/install
+----
+
+=== Configuration Export
+Export the current Drupal configuration to the repository.
+----
+docker-compose exec php drush config-export
+----
+
+=== Configuration Import
+You can import the configuration in the Drupal UI, but it is faster using the cli:
+----
+docker-compose exec php drush config-import
+----
+
+=== Flush Drupal Cache
+----
+docker-compose exec php drush cache-rebuild
+----
+
+=== Backup local content
+
+----
+docker-compose run php /mnt/scripts/backup
+----
+
+=== Restore
+
+----
+docker-compose run php /mnt/scripts/restore
+----
+
+=== Cleanup
+
+----
+docker-compose down -v
+----

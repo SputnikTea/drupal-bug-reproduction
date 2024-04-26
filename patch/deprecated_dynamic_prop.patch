@@ -1,0 +1,12 @@
+diff --git a/src/StreamWrapper/AzBlobFsStream.php b/src/StreamWrapper/AzBlobFsStream.php
+index 23c15c5..706b500 100644
+--- a/web/modules/contrib/az_blob_fs/src/StreamWrapper/AzBlobFsStream.php
++++ b/web/modules/contrib/az_blob_fs/src/StreamWrapper/AzBlobFsStream.php
+@@ -22,6 +22,7 @@ use function _PHPStan_9a6ded56a\RingCentral\Psr7\mimetype_from_extension;
+ /**
+  * Azure Blob Filesystem Stream.
+  */
++#[\AllowDynamicProperties]
+ class AzBlobFsStream extends AzBlobFsStreamWrapper implements StreamWrapperInterface, StreamInterface {
+ 
+   use StreamDecoratorTrait;

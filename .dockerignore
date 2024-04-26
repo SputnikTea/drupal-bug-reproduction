@@ -1,0 +1,6 @@
+.git
+html/vendor
+html/sites/*/files
+html/sites/*/settings*.php
+backup
+kubernetes/local

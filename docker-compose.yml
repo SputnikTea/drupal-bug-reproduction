@@ -1,0 +1,59 @@
+version: '3'
+services:
+  php:
+    build: .
+    image: quick-local-setup:latest
+    depends_on:
+      - "db"
+    volumes:
+      - files:/var/www/html/sites/default/files
+      - ./sync:/var/www/sync
+      - ./backup:/var/www/backup
+      - ./scripts:/mnt/scripts
+    environment:
+      DRUPAL_ENV: local-k8s
+      MARIADB_HOST: db
+      MARIADB_DATABASE: d8__content_store
+      MARIADB_USER: drupal
+      MARIADB_PASSWORD: password
+      AZURE_STORAGE_ACCOUNT_KEY: a2V5MQ==
+  nginx:
+    build:
+      context: .
+      dockerfile: Dockerfile_nginx
+      args:
+        - DRUPAL_IMAGE=quick-local-setup:latest
+    image: quick-local-setup/nginx:latest
+    depends_on:
+      - "php"
+    ports:
+      - "80:8080"
+      - "30007:8080"
+    volumes:
+      - files:/var/www/html/sites/default/files
+  db:
+    image: bitnami/mariadb
+    platform: linux/amd64
+    ports:
+      - "3306:3306"
+    environment:
+      POSTGRES_PASSWORD: example
+      MARIADB_ROOT_PASSWORD: root
+      MARIADB_DATABASE: d8__content_store
+      MARIADB_USER: drupal
+      MARIADB_PASSWORD: password
+    volumes:
+      - db:/bitnami/mariadb
+  azure_storage:
+    image: mcr.microsoft.com/azure-storage/azurite:3.28.0
+    ports:
+      - "10000:10000"
+      - "10001:10001"
+      - "10002:10002"
+    environment:
+      AZURITE_ACCOUNTS: account1:a2V5MQ==
+    volumes:
+      - ./backup/azurite:/data
+volumes:
+  db:
+  files:

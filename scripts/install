@@ -1,0 +1,25 @@
+#!/bin/sh
+
+set -e
+set -u
+
+echo "Start Drupal configuration ($(date))"
+
+echo "Rebuild drupal cache before config-import ($(date))"
+drush cache-rebuild
+echo "Rebuilding Drupal cache done ($(date))"
+
+echo "Start Drupal configuration ($(date))"
+drush -y config-import
+
+echo "Start Drupal DB updates ($(date))"
+drush updb -y
+
+echo "Rebuild Drupal site and clear all its caches ($(date))"
+drush cache-rebuild
+if [ $? -ne 0 ]
+then
+  drush cache-rebuild
+fi
+echo "Rebuilding Drupal cache done ($(date))"
+echo "Finished Drupal configuration ($(date))"

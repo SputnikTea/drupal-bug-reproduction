@@ -1,0 +1,41 @@
+uuid: ce5ffca9-197d-4157-af2a-02f542860b40
+langcode: en
+status: true
+dependencies:
+  config:
+    - field.field.node.demo.body
+    - field.field.node.demo.field_image
+    - node.type.demo
+  module:
+    - image
+    - text
+    - user
+id: node.demo.default
+targetEntityType: node
+bundle: demo
+mode: default
+content:
+  body:
+    type: text_default
+    label: hidden
+    settings: {  }
+    third_party_settings: {  }
+    weight: 101
+    region: content
+  field_image:
+    type: image
+    label: above
+    settings:
+      image_link: ''
+      image_style: ''
+      image_loading:
+        attribute: lazy
+    third_party_settings: {  }
+    weight: 102
+    region: content
+  links:
+    settings: {  }
+    third_party_settings: {  }
+    weight: 100
+    region: content
+hidden: {  }

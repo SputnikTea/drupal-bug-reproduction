@@ -1,0 +1,1163 @@
+# This file was generated. Do not edit manually.
+
+schema {
+    query: Query
+    mutation: Mutation
+}
+
+interface Entity {
+    "The entity type ID."
+    entityTypeId: String!
+    id: String
+    "The label of this entity."
+    label: String
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "Gets an array of all property values."
+    toArray: MapData
+    "The unique UUID."
+    uuid: String!
+}
+
+"An entity that has a description."
+interface EntityDescribable {
+    "The description."
+    entityDescription: String
+    "The entity type ID."
+    entityTypeId: String!
+    id: String
+    "The label of this entity."
+    label: String
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "Gets an array of all property values."
+    toArray: MapData
+    "The unique UUID."
+    uuid: String!
+}
+
+"An entity that is linkable."
+interface EntityLinkable {
+    "Get the URL, defaults to canonical."
+    url(options: UrlOptions, rel: String): Url
+}
+
+"""
+
+Interface for entities that are revisionable.
+This corresponds to the core RevisionableInterface but is only implemeted by entity types where revisions are enabled.
+"""
+interface EntityRevisionable {
+    "The revision identifier of the entity, or NULL if the entity does not have a revision identifier."
+    entityRevisionId: String
+    "The entity type ID."
+    entityTypeId: String!
+    id: String
+    "Checks if this entity is the latest revision."
+    isLatestRevision: Boolean
+    "The label of this entity."
+    label: String
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "Gets an array of all property values."
+    toArray: MapData
+    "The unique UUID."
+    uuid: String!
+    "TRUE if the entity object was a revision, FALSE otherwise."
+    wasDefaultRevision: Boolean
+}
+
+"An entity that is translatable."
+interface EntityTranslatable {
+    "The entity type ID."
+    entityTypeId: String!
+    id: String
+    "The label of this entity."
+    label: String
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "Gets an array of all property values."
+    toArray: MapData
+    "Get a specific translation."
+    translation(
+        "Return entity in current language if translation language does not exist."
+        fallback: Boolean,
+        langcode: Langcode!
+    ): EntityTranslatable
+    "Get all translations."
+    translations: [EntityTranslatable]
+    "The unique UUID."
+    uuid: String!
+}
+
+"A field item list containing items."
+interface FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "The field items."
+    list: [FieldItemType]
+}
+
+"An item in a field list."
+interface FieldItemType {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+}
+
+"Interface for field item types with an integer value."
+interface FieldItemTypeIntegerInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    value: Int
+}
+
+"Interface for string field types."
+interface FieldItemTypeStringInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    value: String
+}
+
+"Interface for field item types with a timestamp value."
+interface FieldItemTypeTimestampInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    value: String
+}
+
+"Interface for a language."
+interface LanguageInterface {
+    direction: Int!
+    id: String
+    isLocked: Boolean!
+    name: String!
+    weight: Int
+}
+
+"Content"
+interface Node {
+    "{value} {field: changed} The time that the node was last edited."
+    changed: String
+    "{field: changed} The time that the node was last edited."
+    changedRawField: FieldItemListChanged
+    "{value} {field: created} The date and time that the content was created."
+    created: String
+    "{field: created} The date and time that the content was created."
+    createdRawField: FieldItemListCreated
+    "{value} {field: default_langcode} A flag indicating whether this is the default translation."
+    defaultLangcode: Boolean
+    "{field: default_langcode} A flag indicating whether this is the default translation."
+    defaultLangcodeRawField: FieldItemListBoolean
+    "The revision identifier of the entity, or NULL if the entity does not have a revision identifier."
+    entityRevisionId: String
+    "The entity type ID."
+    entityTypeId: String!
+    id: String
+    "Checks if this entity is the latest revision."
+    isLatestRevision: Boolean
+    "The label of this entity."
+    label: String
+    "{value} {field: moderation_state} The moderation state of this piece of content."
+    moderationState: String
+    "{field: moderation_state} The moderation state of this piece of content."
+    moderationStateRawField: FieldItemListString
+    "{value} {field: nid} "
+    nid: Int
+    "{field: nid} "
+    nidRawField: FieldItemListInteger
+    "{value} {field: path} "
+    path: FieldItemTypePath
+    "{field: path} "
+    pathRawField: FieldItemListPath
+    "{value} {field: promote} "
+    promote: Boolean
+    "{field: promote} "
+    promoteRawField: FieldItemListBoolean
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "{value} {field: revision_default} A flag indicating whether this was a default revision when it was saved."
+    revisionDefault: Boolean
+    "{field: revision_default} A flag indicating whether this was a default revision when it was saved."
+    revisionDefaultRawField: FieldItemListBoolean
+    "{value} {field: revision_log} Briefly describe the changes you have made."
+    revisionLog: String
+    "{field: revision_log} Briefly describe the changes you have made."
+    revisionLogRawField: FieldItemListStringLong
+    "{value} {field: revision_timestamp} The time that the current revision was created."
+    revisionTimestamp: String
+    "{field: revision_timestamp} The time that the current revision was created."
+    revisionTimestampRawField: FieldItemListCreated
+    "{value} {field: revision_translation_affected} Indicates if the last edit of a translation belongs to current revision."
+    revisionTranslationAffected: Boolean
+    "{field: revision_translation_affected} Indicates if the last edit of a translation belongs to current revision."
+    revisionTranslationAffectedRawField: FieldItemListBoolean
+    "{value} {field: revision_uid} The user ID of the author of the current revision."
+    revisionUid: User
+    "{field: revision_uid} The user ID of the author of the current revision."
+    revisionUidRawField: FieldItemListEntityReference
+    "{value} {field: status} "
+    status: Boolean
+    "{field: status} "
+    statusRawField: FieldItemListBoolean
+    "{value} {field: sticky} "
+    sticky: Boolean
+    "{field: sticky} "
+    stickyRawField: FieldItemListBoolean
+    "{value} {field: title} "
+    title: String
+    "{field: title} "
+    titleRawField: FieldItemListString
+    "Gets an array of all property values."
+    toArray: MapData
+    "{value} {field: uid} The username of the content author."
+    uid: User
+    "{field: uid} The username of the content author."
+    uidRawField: FieldItemListEntityReference
+    "Get the URL, defaults to canonical."
+    url(options: UrlOptions, rel: String): Url
+    "The unique UUID."
+    uuid: String!
+    "{value} {field: vid} "
+    vid: Int
+    "{field: vid} "
+    vidRawField: FieldItemListInteger
+    "TRUE if the entity object was a revision, FALSE otherwise."
+    wasDefaultRevision: Boolean
+}
+
+"Interface for an URL."
+interface Url {
+    path: String
+}
+
+"Content moderation state"
+type ContentModerationState implements Entity & EntityRevisionable {
+    "{value} {field: content_entity_id} The ID of the content entity this moderation state is for."
+    contentEntityId: Int
+    "{field: content_entity_id} The ID of the content entity this moderation state is for."
+    contentEntityIdRawField: FieldItemListInteger
+    "{value} {field: content_entity_revision_id} The revision ID of the content entity this moderation state is for."
+    contentEntityRevisionId: Int
+    "{field: content_entity_revision_id} The revision ID of the content entity this moderation state is for."
+    contentEntityRevisionIdRawField: FieldItemListInteger
+    "{value} {field: content_entity_type_id} The ID of the content entity type this moderation state is for."
+    contentEntityTypeId: String
+    "{field: content_entity_type_id} The ID of the content entity type this moderation state is for."
+    contentEntityTypeIdRawField: FieldItemListString
+    "{value} {field: default_langcode} A flag indicating whether this is the default translation."
+    defaultLangcode: Boolean
+    "{field: default_langcode} A flag indicating whether this is the default translation."
+    defaultLangcodeRawField: FieldItemListBoolean
+    "The revision identifier of the entity, or NULL if the entity does not have a revision identifier."
+    entityRevisionId: String
+    "The entity type ID."
+    entityTypeId: String!
+    id: String
+    "Checks if this entity is the latest revision."
+    isLatestRevision: Boolean
+    "The label of this entity."
+    label: String
+    "{value} {field: moderation_state} The moderation state of the referenced content."
+    moderationState: String
+    "{field: moderation_state} The moderation state of the referenced content."
+    moderationStateRawField: FieldItemListString
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "{value} {field: revision_default} A flag indicating whether this was a default revision when it was saved."
+    revisionDefault: Boolean
+    "{field: revision_default} A flag indicating whether this was a default revision when it was saved."
+    revisionDefaultRawField: FieldItemListBoolean
+    "{value} {field: revision_id} "
+    revisionId: Int
+    "{field: revision_id} "
+    revisionIdRawField: FieldItemListInteger
+    "{value} {field: revision_translation_affected} Indicates if the last edit of a translation belongs to current revision."
+    revisionTranslationAffected: Boolean
+    "{field: revision_translation_affected} Indicates if the last edit of a translation belongs to current revision."
+    revisionTranslationAffectedRawField: FieldItemListBoolean
+    "Gets an array of all property values."
+    toArray: MapData
+    "{value} {field: uid} The username of the entity creator."
+    uid: User
+    "{field: uid} The username of the entity creator."
+    uidRawField: FieldItemListEntityReference
+    "The unique UUID."
+    uuid: String!
+    "TRUE if the entity object was a revision, FALSE otherwise."
+    wasDefaultRevision: Boolean
+}
+
+type DefaultUrl implements Url {
+    path: String
+}
+
+type EntityQueryResult {
+    items: [Entity]
+    total: Int!
+}
+
+"Field"
+type FieldConfig implements Entity {
+    "{field: bundle} "
+    bundle: String
+    "{field: default_value_callback} "
+    defaultValueCallback: String
+    "{field: dependencies} "
+    dependencies: MapData
+    "{field: description} "
+    description: String
+    "{field: entity_type} "
+    entityType: String
+    "The entity type ID."
+    entityTypeId: String!
+    "{field: field_name} "
+    fieldName: String
+    "{field: field_type} "
+    fieldType: String
+    id: String
+    "The label of this entity."
+    label: String
+    "{field: required} "
+    required: Boolean
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "{field: status} "
+    status: Boolean
+    "Gets an array of all property values."
+    toArray: MapData
+    "{field: translatable} "
+    translatable: Boolean
+    "The unique UUID."
+    uuid: String!
+}
+
+"User status"
+type FieldItemListBoolean implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeBoolean
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeBoolean]
+}
+
+"Changed"
+type FieldItemListChanged implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeChanged
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeChanged]
+}
+
+"Created"
+type FieldItemListCreated implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeCreated
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeCreated]
+}
+
+"Email"
+type FieldItemListEmail implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeEmail
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeEmail]
+}
+
+"User"
+type FieldItemListEntityReference implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeEntityReference
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeEntityReference]
+}
+
+"URI"
+type FieldItemListFileUri implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeFileUri
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeFileUri]
+}
+
+"Picture"
+type FieldItemListImage implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeImage
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeImage]
+}
+
+"ID"
+type FieldItemListInteger implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeInteger
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeInteger]
+}
+
+"Language"
+type FieldItemListLanguage implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeLanguage
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeLanguage]
+}
+
+"Password"
+type FieldItemListPassword implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypePassword
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypePassword]
+}
+
+"URL alias"
+type FieldItemListPath implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypePath
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypePath]
+}
+
+"Name"
+type FieldItemListString implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeString
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeString]
+}
+
+"Revision log message"
+type FieldItemListStringLong implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeStringLong
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeStringLong]
+}
+
+"Body"
+type FieldItemListTextWithSummary implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeTextWithSummary
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeTextWithSummary]
+}
+
+"Last access"
+type FieldItemListTimestamp implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeTimestamp
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeTimestamp]
+}
+
+"UUID"
+type FieldItemListUuid implements FieldItemList {
+    "The number of field items."
+    count: Int!
+    "Get the entity the field belongs to."
+    entity: Entity
+    "The first field item."
+    first: FieldItemTypeUuid
+    "Get a string representation of all field items."
+    getString: String!
+    "True if the field list has no items."
+    isEmpty: Boolean!
+    "Array of field items."
+    list: [FieldItemTypeUuid]
+}
+
+type FieldItemTypeBoolean implements FieldItemType {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: value} Boolean value"
+    value: Boolean
+}
+
+type FieldItemTypeChanged implements FieldItemType & FieldItemTypeStringInterface & FieldItemTypeTimestampInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: value} Timestamp value"
+    value: String
+}
+
+type FieldItemTypeCreated implements FieldItemType & FieldItemTypeStringInterface & FieldItemTypeTimestampInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: value} Timestamp value"
+    value: String
+}
+
+type FieldItemTypeEmail implements FieldItemType & FieldItemTypeStringInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: value} Email"
+    value: String
+}
+
+type FieldItemTypeEntityReference implements FieldItemType {
+    "{field: entity} User"
+    entity: User
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: target_id} User ID"
+    targetId: Int
+}
+
+type FieldItemTypeFileUri implements FieldItemType {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: url} Root-relative file URL"
+    url: String
+    "{field: value} URI value"
+    value: Url
+}
+
+type FieldItemTypeImage implements FieldItemType {
+    "{field: alt} Alternative text"
+    alt: String
+    derivative(style: ImageStyleId!): ImageResource
+    "{field: entity} File"
+    entity: File
+    "{field: height} Height"
+    height: Int
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: target_id} File ID"
+    targetId: Int
+    "{field: title} Title"
+    title: String
+    "{field: width} Width"
+    width: Int
+}
+
+type FieldItemTypeInteger implements FieldItemType & FieldItemTypeIntegerInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: value} Integer value"
+    value: Int
+}
+
+type FieldItemTypeLanguage implements FieldItemType & FieldItemTypeStringInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: language} Language object"
+    language: LanguageInterface
+    "{field: value} Language code"
+    value: String
+}
+
+type FieldItemTypePassword implements FieldItemType & FieldItemTypeStringInterface {
+    "{field: existing} Existing password"
+    existing: String
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: pre_hashed} Determines if a password needs hashing"
+    preHashed: Boolean
+    "{field: value} The hashed password"
+    value: String
+}
+
+type FieldItemTypePath implements FieldItemType {
+    "{field: alias} Path alias"
+    alias: String
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: langcode} Language Code"
+    langcode: String
+    "{field: pid} Path id"
+    pid: Int
+}
+
+type FieldItemTypeString implements FieldItemType & FieldItemTypeStringInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: value} Text value"
+    value: String
+}
+
+type FieldItemTypeStringLong implements FieldItemType & FieldItemTypeStringInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: value} Text value"
+    value: String
+}
+
+type FieldItemTypeTextWithSummary implements FieldItemType & FieldItemTypeStringInterface {
+    "{field: format} Text format"
+    format: String
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: processed} Processed text"
+    processed: String
+    "{field: summary} Summary"
+    summary: String
+    "{field: summary_processed} Processed summary"
+    summaryProcessed: String
+    "{field: value} Text"
+    value: String
+}
+
+type FieldItemTypeTimestamp implements FieldItemType & FieldItemTypeStringInterface & FieldItemTypeTimestampInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: value} Timestamp value"
+    value: String
+}
+
+type FieldItemTypeUuid implements FieldItemType & FieldItemTypeStringInterface {
+    "True if this item is considered empty."
+    isEmpty: Boolean!
+    "{field: value} Text value"
+    value: String
+}
+
+"File"
+type File implements Entity & EntityLinkable {
+    "{value} {field: changed} The timestamp that the file was last changed."
+    changed: String
+    "{field: changed} The timestamp that the file was last changed."
+    changedRawField: FieldItemListChanged
+    "{value} {field: created} The timestamp that the file was created."
+    created: String
+    "{field: created} The timestamp that the file was created."
+    createdRawField: FieldItemListCreated
+    "The entity type ID."
+    entityTypeId: String!
+    "{value} {field: fid} The file ID."
+    fid: Int
+    "{field: fid} The file ID."
+    fidRawField: FieldItemListInteger
+    "{value} {field: filemime} The file's MIME type."
+    filemime: String
+    "{field: filemime} The file's MIME type."
+    filemimeRawField: FieldItemListString
+    "{value} {field: filename} Name of the file with no path components."
+    filename: String
+    "{field: filename} Name of the file with no path components."
+    filenameRawField: FieldItemListString
+    "{value} {field: filesize} The size of the file in bytes."
+    filesize: Int
+    "{field: filesize} The size of the file in bytes."
+    filesizeRawField: FieldItemListInteger
+    id: String
+    "The label of this entity."
+    label: String
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "{value} {field: status} The status of the file, temporary (FALSE) and permanent (TRUE)."
+    status: Boolean
+    "{field: status} The status of the file, temporary (FALSE) and permanent (TRUE)."
+    statusRawField: FieldItemListBoolean
+    "Gets an array of all property values."
+    toArray: MapData
+    "{value} {field: uid} The user ID of the file."
+    uid: User
+    "{field: uid} The user ID of the file."
+    uidRawField: FieldItemListEntityReference
+    "{value} {field: uri} The URI to access the file (either local or remote)."
+    uri: String
+    "{field: uri} The URI to access the file (either local or remote)."
+    uriRawField: FieldItemListFileUri
+    "Get the URL, defaults to canonical."
+    url(options: UrlOptions, rel: String): Url
+    "The unique UUID."
+    uuid: String!
+}
+
+type ImageResource {
+    "The height of the generated image."
+    height: Int
+    "The path of the image."
+    urlPath: String
+    "The width of the generated image."
+    width: Int
+}
+
+type Language implements LanguageInterface {
+    direction: Int!
+    id: String
+    isLocked: Boolean!
+    name: String!
+    weight: Int
+}
+
+type Mutation {
+    ping: String
+}
+
+"Demo"
+type NodeDemo implements Entity & EntityLinkable & EntityRevisionable & Node {
+    "{value} {field: body} "
+    body(summary: Boolean): String
+    "{field: body} "
+    bodyRawField: FieldItemListTextWithSummary
+    "{value} {field: changed} The time that the node was last edited."
+    changed: String
+    "{field: changed} The time that the node was last edited."
+    changedRawField: FieldItemListChanged
+    "{value} {field: created} The date and time that the content was created."
+    created: String
+    "{field: created} The date and time that the content was created."
+    createdRawField: FieldItemListCreated
+    "{value} {field: default_langcode} A flag indicating whether this is the default translation."
+    defaultLangcode: Boolean
+    "{field: default_langcode} A flag indicating whether this is the default translation."
+    defaultLangcodeRawField: FieldItemListBoolean
+    "The revision identifier of the entity, or NULL if the entity does not have a revision identifier."
+    entityRevisionId: String
+    "The entity type ID."
+    entityTypeId: String!
+    "{value} {field: field_image} "
+    fieldImage: FieldItemTypeImage
+    "{field: field_image} "
+    fieldImageRawField: FieldItemListImage
+    id: String
+    "Checks if this entity is the latest revision."
+    isLatestRevision: Boolean
+    "The label of this entity."
+    label: String
+    "{value} {field: moderation_state} The moderation state of this piece of content."
+    moderationState: String
+    "{field: moderation_state} The moderation state of this piece of content."
+    moderationStateRawField: FieldItemListString
+    "{value} {field: nid} "
+    nid: Int
+    "{field: nid} "
+    nidRawField: FieldItemListInteger
+    "{value} {field: path} "
+    path: FieldItemTypePath
+    "{field: path} "
+    pathRawField: FieldItemListPath
+    "{value} {field: promote} "
+    promote: Boolean
+    "{field: promote} "
+    promoteRawField: FieldItemListBoolean
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "{value} {field: revision_default} A flag indicating whether this was a default revision when it was saved."
+    revisionDefault: Boolean
+    "{field: revision_default} A flag indicating whether this was a default revision when it was saved."
+    revisionDefaultRawField: FieldItemListBoolean
+    "{value} {field: revision_log} Briefly describe the changes you have made."
+    revisionLog: String
+    "{field: revision_log} Briefly describe the changes you have made."
+    revisionLogRawField: FieldItemListStringLong
+    "{value} {field: revision_timestamp} The time that the current revision was created."
+    revisionTimestamp: String
+    "{field: revision_timestamp} The time that the current revision was created."
+    revisionTimestampRawField: FieldItemListCreated
+    "{value} {field: revision_translation_affected} Indicates if the last edit of a translation belongs to current revision."
+    revisionTranslationAffected: Boolean
+    "{field: revision_translation_affected} Indicates if the last edit of a translation belongs to current revision."
+    revisionTranslationAffectedRawField: FieldItemListBoolean
+    "{value} {field: revision_uid} The user ID of the author of the current revision."
+    revisionUid: User
+    "{field: revision_uid} The user ID of the author of the current revision."
+    revisionUidRawField: FieldItemListEntityReference
+    "{value} {field: status} "
+    status: Boolean
+    "{field: status} "
+    statusRawField: FieldItemListBoolean
+    "{value} {field: sticky} "
+    sticky: Boolean
+    "{field: sticky} "
+    stickyRawField: FieldItemListBoolean
+    "{value} {field: title} "
+    title: String
+    "{field: title} "
+    titleRawField: FieldItemListString
+    "Gets an array of all property values."
+    toArray: MapData
+    "{value} {field: uid} The username of the content author."
+    uid: User
+    "{field: uid} The username of the content author."
+    uidRawField: FieldItemListEntityReference
+    "Get the URL, defaults to canonical."
+    url(options: UrlOptions, rel: String): Url
+    "The unique UUID."
+    uuid: String!
+    "{value} {field: vid} "
+    vid: Int
+    "{field: vid} "
+    vidRawField: FieldItemListInteger
+    "TRUE if the entity object was a revision, FALSE otherwise."
+    wasDefaultRevision: Boolean
+}
+
+type Query {
+    entityById(entityType: EntityType!, id: ID!, langcode: Langcode): Entity
+    entityByUuid(entityType: EntityType!, langcode: Langcode, uuid: String!): Entity
+    entityQuery(
+        " The machine name of the entity type (e.g. \"node\", \"taxonomy_term\", etc.) "
+        entityType: EntityType!,
+        " Filter results. "
+        filter: EntityQueryFilterInput,
+        " The maximum amount of items to return. "
+        limit: Int = 10,
+        " Index of the first item. "
+        offset: Int = 0,
+        revisions: EntityQueryRevisionMode = DEFAULT,
+        " Sort results. "
+        sort: [EntityQuerySortInput!]
+    ): EntityQueryResult!
+    ping: String
+}
+
+type ReverseReferenceContext {
+    query(
+        "The machine name of the entity type (e.g. NODE)."
+        entityType: EntityType!,
+        "Filter results."
+        filter: EntityQueryFilterInput,
+        "The maximum amount of items to return."
+        limit: Int,
+        "Index of the first item."
+        offset: Int,
+        "The fields that should be used when looking for references."
+        referenceFields: [String]!,
+        revisions: EntityQueryRevisionMode,
+        "Sort results."
+        sort: [EntityQuerySortInput!]
+    ): EntityQueryResult!
+    "The target ID used for the reverse reference query."
+    targetId: String
+}
+
+"User"
+type User implements Entity & EntityLinkable {
+    "{value} {field: access} The time that the user last accessed the site."
+    access: String
+    "{field: access} The time that the user last accessed the site."
+    accessRawField: FieldItemListTimestamp
+    "{value} {field: changed} The time that the user was last edited."
+    changed: String
+    "{field: changed} The time that the user was last edited."
+    changedRawField: FieldItemListChanged
+    "{value} {field: created} The time that the user was created."
+    created: String
+    "{field: created} The time that the user was created."
+    createdRawField: FieldItemListCreated
+    "{value} {field: default_langcode} A flag indicating whether this is the default translation."
+    defaultLangcode: Boolean
+    "{field: default_langcode} A flag indicating whether this is the default translation."
+    defaultLangcodeRawField: FieldItemListBoolean
+    "The entity type ID."
+    entityTypeId: String!
+    id: String
+    "{value} {field: init} The email address used for initial account creation."
+    init: String
+    "{field: init} The email address used for initial account creation."
+    initRawField: FieldItemListEmail
+    "The label of this entity."
+    label: String
+    "{value} {field: login} The time that the user last logged in."
+    login: String
+    "{field: login} The time that the user last logged in."
+    loginRawField: FieldItemListTimestamp
+    "{value} {field: mail} The email of this user."
+    mail: String
+    "{field: mail} The email of this user."
+    mailRawField: FieldItemListEmail
+    "{value} {field: name} The name of this user."
+    name: String
+    "{field: name} The name of this user."
+    nameRawField: FieldItemListString
+    "{value} {field: preferred_admin_langcode} The user's preferred language code for viewing administration pages."
+    preferredAdminLangcode: LanguageInterface
+    "{field: preferred_admin_langcode} The user's preferred language code for viewing administration pages."
+    preferredAdminLangcodeRawField: FieldItemListLanguage
+    "{value} {field: preferred_langcode} The user's preferred language code for receiving emails and viewing the site."
+    preferredLangcode: LanguageInterface
+    "{field: preferred_langcode} The user's preferred language code for receiving emails and viewing the site."
+    preferredLangcodeRawField: FieldItemListLanguage
+    "Query for entities that reference this entity."
+    reverseReference: ReverseReferenceContext
+    "{value} {field: status} Whether the user is active or blocked."
+    status: Boolean
+    "{field: status} Whether the user is active or blocked."
+    statusRawField: FieldItemListBoolean
+    "{value} {field: timezone} The timezone of this user."
+    timezone: String
+    "{field: timezone} The timezone of this user."
+    timezoneRawField: FieldItemListString
+    "Gets an array of all property values."
+    toArray: MapData
+    "{value} {field: uid} The user ID."
+    uid: Int
+    "{field: uid} The user ID."
+    uidRawField: FieldItemListInteger
+    "Get the URL, defaults to canonical."
+    url(options: UrlOptions, rel: String): Url
+    "{value} {field: user_picture} Your virtual face or picture."
+    userPicture: FieldItemTypeImage
+    "{field: user_picture} Your virtual face or picture."
+    userPictureRawField: FieldItemListImage
+    "The unique UUID."
+    uuid: String!
+}
+
+enum DrupalDateFormat {
+    "Mon, 11/14/2022 - 13:52"
+    FALLBACK
+    "2022-11-14"
+    HTML_DATE
+    "2022-11-14T13:52:21+0000"
+    HTML_DATETIME
+    "2022-11"
+    HTML_MONTH
+    "13:52:21"
+    HTML_TIME
+    "2022-W46"
+    HTML_WEEK
+    "2022"
+    HTML_YEAR
+    "11-14"
+    HTML_YEARLESS_DATE
+    "Monday, November 14, 2022 - 13:52"
+    LONG
+    "Mon, 11/14/2022 - 13:52"
+    MEDIUM
+    "14  November,  2022"
+    OLIVERO_MEDIUM
+    "11/14/2022 - 13:52"
+    SHORT
+}
+
+enum EntityQueryBundleMode {
+    "Loads entities across all bundles."
+    ALL
+    "Loads only entities that share the same bundle with the parent entity."
+    SAME
+}
+
+enum EntityQueryConjunction {
+    AND
+    OR
+}
+
+enum EntityQueryOperator {
+    BETWEEN
+    CONTAINS
+    ENDS_WITH
+    EQUAL
+    GREATER_THAN
+    GREATER_THAN_OR_EQUAL
+    IN
+    IS_NOT_NULL
+    IS_NULL
+    LIKE
+    NOT_BETWEEN
+    NOT_EQUAL
+    NOT_IN
+    NOT_LIKE
+    REGEXP
+    SMALLER_THAN
+    SMALLER_THAN_OR_EQUAL
+    STARTS_WITH
+}
+
+enum EntityQueryRevisionMode {
+    "Loads all revisions."
+    ALL
+    "Loads the current (default) revisions."
+    DEFAULT
+    "Loads latest revision."
+    LATEST
+}
+
+enum EntityQuerySortOrder {
+    ASC
+    DESC
+}
+
+enum EntityType {
+    "Content moderation state"
+    CONTENT_MODERATION_STATE
+    "Field"
+    FIELD_CONFIG
+    "File"
+    FILE
+    "Content"
+    NODE
+    "User"
+    USER
+}
+
+enum ImageStyleId {
+    "{large} Large (480×480)"
+    LARGE
+    "{medium} Medium (220×220)"
+    MEDIUM
+    "{thumbnail} Thumbnail (100×100)"
+    THUMBNAIL
+    "{wide} Wide (1090)"
+    WIDE
+}
+
+enum Langcode {
+    "English"
+    EN
+}
+
+"Generic type for untyped values."
+scalar MapData
+
+input EntityQueryFilterConditionInput {
+    enabled: Boolean
+    field: String!
+    language: String
+    operator: EntityQueryOperator
+    value: [String]
+}
+
+input EntityQueryFilterInput {
+    conditions: [EntityQueryFilterConditionInput]
+    conjunction: EntityQueryConjunction
+    groups: [EntityQueryFilterInput]
+}
+
+input EntityQuerySortInput {
+    direction: EntityQuerySortOrder
+    field: String!
+    language: String
+}
+
+input UrlOptions {
+    """
+
+    Whether to force the output to be an absolute link (beginning with http:).
+    Useful for links that will be displayed outside the site, such as in an RSS
+    """
+    absolute: Boolean
+    "A fragment identifier (named anchor) to append to the URL. Do not include the leading '#' character."
+    fragment: String
+    "Force generating the URL in the given langcode."
+    language: Langcode
+}

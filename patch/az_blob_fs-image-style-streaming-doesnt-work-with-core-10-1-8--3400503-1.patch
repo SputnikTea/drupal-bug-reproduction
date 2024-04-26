@@ -1,0 +1,13 @@
+diff --git a/src/StreamWrapper/AzBlobFsStream.php b/src/StreamWrapper/AzBlobFsStream.php
+index 23c15c5..d0b9f0b 100644
+--- a/web/modules/contrib/az_blob_fs/src/StreamWrapper/AzBlobFsStream.php
++++ b/web/modules/contrib/az_blob_fs/src/StreamWrapper/AzBlobFsStream.php
+@@ -409,7 +409,7 @@ class AzBlobFsStream extends AzBlobFsStreamWrapper implements StreamWrapperInter
+   // @codingStandardsIgnoreStart
+   public function stream_eof(): bool {
+     // @codingStandardsIgnoreEnd
+-    return $this->eof();
++    return feof($this->temporaryFileHandle);
+   }
+ 
+   /**

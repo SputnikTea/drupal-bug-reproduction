@@ -1,0 +1,108 @@
+uuid: fc908bea-3493-43c7-a73a-3d7228627c96
+langcode: en
+status: true
+dependencies: {  }
+name: main
+label: main
+endpoint: /graphql
+debug_flag: 15
+schema: core_composable
+caching: false
+batching: false
+disable_introspection: false
+query_depth: null
+query_complexity: null
+schema_configuration:
+  core_composable:
+    extensions:
+      entity_query: entity_query
+      image: image
+      render_field_item: render_field_item
+      reverse_entity_reference: reverse_entity_reference
+    generate_value_fields: 1
+    entity_base_fields:
+      fields:
+        entityTypeId: entityTypeId
+        label: label
+        toArray: toArray
+        uuid: uuid
+    enabled_entity_types:
+      content_moderation_state: 1
+      field_config: 1
+      file: 1
+      node: 1
+      user: 1
+    fields:
+      content_moderation_state:
+        content_entity_id: content_entity_id
+        content_entity_revision_id: content_entity_revision_id
+        content_entity_type_id: content_entity_type_id
+        default_langcode: default_langcode
+        moderation_state: moderation_state
+        revision_default: revision_default
+        revision_id: revision_id
+        revision_translation_affected: revision_translation_affected
+        uid: uid
+        workflow: workflow
+      field_config:
+        bundle: bundle
+        default_value: default_value
+        default_value_callback: default_value_callback
+        dependencies: dependencies
+        description: description
+        entity_type: entity_type
+        field_name: field_name
+        field_type: field_type
+        required: required
+        settings: settings
+        status: status
+        third_party_settings: third_party_settings
+        translatable: translatable
+      file:
+        changed: changed
+        created: created
+        fid: fid
+        filemime: filemime
+        filename: filename
+        filesize: filesize
+        status: status
+        uid: uid
+        uri: uri
+      node:
+        body: body
+        changed: changed
+        created: created
+        default_langcode: default_langcode
+        field_image: field_image
+        moderation_state: moderation_state
+        nid: nid
+        path: path
+        promote: promote
+        revision_default: revision_default
+        revision_log: revision_log
+        revision_timestamp: revision_timestamp
+        revision_translation_affected: revision_translation_affected
+        revision_uid: revision_uid
+        status: status
+        sticky: sticky
+        title: title
+        type: type
+        uid: uid
+        vid: vid
+      user:
+        access: access
+        changed: changed
+        created: created
+        default_langcode: default_langcode
+        init: init
+        login: login
+        mail: mail
+        name: name
+        preferred_admin_langcode: preferred_admin_langcode
+        preferred_langcode: preferred_langcode
+        roles: roles
+        status: status
+        timezone: timezone
+        uid: uid
+        user_picture: user_picture
+persisted_queries_settings: {  }

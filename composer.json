@@ -1,0 +1,67 @@
+{
+	"name": "reproduction/drupal",
+	"description": "Headless CMS.",
+	"type": "project",
+	"require": {
+		"composer/installers": "^1.12",
+		"drupal/az_blob_fs": "^2.3",
+		"drupal/core-composer-scaffold": "^10.2.3",
+		"drupal/core-project-message": "^10.2.3",
+		"drupal/core-recommended": "^10.2.3",
+		"drupal/graphql": "^4.6",
+		"drupal/graphql_core_schema": "^1.0.2@beta",
+		"drush/drush": "^12.4.3"
+	},
+	"minimum-stability": "stable",
+	"prefer-stable": true,
+	"config": {
+		"allow-plugins": {
+			"composer/installers": true,
+			"drupal/core-composer-scaffold": true,
+			"drupal/core-project-message": true
+		},
+		"sort-packages": true
+	},
+	"repositories": [
+		{
+			"type": "composer",
+			"url": "https://packages.drupal.org/8"
+		}
+	],
+	"extra": {
+		"drupal-scaffold": {
+			"locations": {
+				"web-root": "web/"
+			}
+		},
+		"installer-paths": {
+			"web/core": [
+				"type:drupal-core"
+			],
+			"web/libraries/{$name}": [
+				"type:drupal-library"
+			],
+			"web/modules/contrib/{$name}": [
+				"type:drupal-module"
+			],
+			"web/profiles/contrib/{$name}": [
+				"type:drupal-profile"
+			],
+			"web/themes/contrib/{$name}": [
+				"type:drupal-theme"
+			],
+			"drush/Commands/contrib/{$name}": [
+				"type:drupal-drush"
+			],
+			"web/modules/custom/{$name}": [
+				"type:drupal-custom-module"
+			],
+			"web/profiles/custom/{$name}": [
+				"type:drupal-custom-profile"
+			],
+			"web/themes/custom/{$name}": [
+				"type:drupal-custom-theme"
+			]
+		}
+	}
+}

@@ -1,0 +1,105 @@
+= Drupal Deployment
+:toc:
+
+This document describes how Drupal is deployed to Kubernetes using azure pipelines
+
+== Steps to reproduce bug
+
+*To be done*
+
+Maybe https://medium.com/we-are-testers/chapter-4-how-to-write-clear-and-efficient-steps-to-reproduce-in-your-bug-report-d96039a1c77d[this article] can help
+
+
+
+== Important Files / Project Structure
+
+* *backup*: db, blob store and file system backups
+* *config*: site settings - will be copied to /var/www/html/sites/default/
+* *sync*: contains the Drupal site configuration files
+* *scripts*: shell scripts executed to install, backup, or restore Drupal
+
+== Useful Commands
+
+=== Update drupal dependencies manually
+
+[source,bash]
+----
+docker-compose build php
+docker run --rm -it -v $(pwd)/composer.json:/opt/drupal/composer.json -v $(pwd)/composer.lock:/opt/drupal/composer.lock -u root --workdir /opt/drupal quick-local-setup:latest bash -c 'composer update && composer bump'
+----
+
+Check that drupal continues to work by running `./quick-local-setup.sh`.
+
+After this, commit the changes to the composer.[json|lock] to git to ensure, that the pipeline uses the updated packages.
+
+=== Add new dependency and or upgrade dependency
+
+[source,bash]
+----
+docker-compose build php
+docker run --rm -it -v $(pwd)/composer.json:/opt/drupal/composer.json -v $(pwd)/composer.lock:/opt/drupal/composer.lock -u root --workdir /opt/drupal quick-local-setup:latest bash -c 'composer require --update-with-all-dependencies <modulename>:<version>'
+----
+
+To have it enabled in the configuration, make sure to also add the configuration export.
+Run `docker-compose exec php drush config-export` to update db if module update requires a db update.
+
+TIP: `composer require` allows multiple modules to be added/upgraded at once, e.g. `composer require drupal/module1:1.0 drupal/module2:2.0`.
+
+=== Remove a dependency
+
+First you need to uninstall the module, and re-export the configuration.
+
+[source,bash]
+----
+docker-compose build php
+docker run --rm -it -v $(pwd)/composer.json:/opt/drupal/composer.json -v $(pwd)/composer.lock:/opt/drupal/composer.lock -u root --workdir /opt/drupal quick-local-setup:latest bash -c 'composer remove <modulename>'
+----
+
+This should remove the entry of the module in link:./sync/core.extension.yml[core.extension.yml] file.
+This change needs to be deployed in order to uninstall the module.
+During an uninstall of a module it possibly removes its database tables, etc.
+
+As a second step also the module files can be removed from the codebase or the build.
+In order to do that, remove the entry from the link:Dockerfile[Dockerfile].
+
+=== Other Useful Drupal commands
+
+* get path of temp dir `drush cget system.file path.temporary --include-overridden`
+* rebuild Drupal site and clear all its caches `drush cr`
+* import Drupal configuration from file system `drush -y config-import`
+* download a specific version of a module `drush dl MODULE_NAME --select`
+
+=== SVG cannot be uploaded
+
+We sanitize our SVG files with https://github.com/darylldoyle/svg-sanitizer[svg-sanitizer].
+Therefore, we apply a patch that we've downloaded from this https://www.drupal.org/project/svg_image/issues/3350696[issue].
+The whitelists of the sanitizer can be found https://github.com/darylldoyle/svg-sanitizer/blob/master/src/data/AllowedAttributes.php[here] and https://github.com/darylldoyle/svg-sanitizer/blob/master/src/data/AllowedTags.php[here].
+
+== Content Access
+
+The content is authored and managed in Drupal but displayed only in the Public Website which is also known as decoupled or headless Drupal.
+For accessing the content in Drupal we use GraphQL.
+The Drupal GraphQL module comes with two UIs that support the developer in writing GraphQL queries:
+
+* http://localhost:30007/graphql/voyager : an UI to explore the Drupal data model
+* http://localhost:30007/graphql/explorer : an UI to write and test GraphQL queries
+
+For writing queries in Intellij, it is recommended to install the JS GraphQL Intellij Plugin.
+
+
+==== diff Module
+
+PHP Notices are shown when multi-value image images fields are diffed.
+https://www.drupal.org/project/diff/issues/2844337
+https://www.drupal.org/files/issues/diff-remove-thumbnails-errors-2844337-17.patch
+
+==== Core
+
+To avoid display of warnings, after using field_states_ui Module
+https://www.drupal.org/project/field_states_ui/issues/3009302
+https://www.drupal.org/project/drupal/issues/2700667
+https://www.drupal.org/files/issues/2020-02-04/2700667-91.patch
+
+== Local setup
+
+* link:doc/docker-compose[Local setup using Docker Compose]

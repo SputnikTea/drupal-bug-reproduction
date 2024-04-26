@@ -1,0 +1,13 @@
+diff --git a/web/core/modules/system/src/Plugin/ImageToolkit/GDToolkit.php b/web/core/modules/system/src/Plugin/ImageToolkit/GDToolkit.php
+index 9218ae3ce6..ff143b77cd 100644
+--- a/web/core/modules/system/src/Plugin/ImageToolkit/GDToolkit.php
++++ b/web/core/modules/system/src/Plugin/ImageToolkit/GDToolkit.php
+@@ -200,7 +200,7 @@ protected function load() {
+     }
+
+     $function = 'imagecreatefrom' . image_type_to_extension($this->getType(), FALSE);
+-    if (function_exists($function) && $resource = $function($this->getSource())) {
++    if (function_exists($function) && $resource = @$function($this->getSource())) {
+       $this->setResource($resource);
+       if (imageistruecolor($resource)) {
+         return TRUE;

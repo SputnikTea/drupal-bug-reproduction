@@ -1,0 +1,9 @@
+schema: config/schema.graphql
+extensions:
+  endpoints:
+    GraphQL Endpoint in localhost:
+      url: http://localhost:30007/graphql
+      introspect: true
+      headers:
+        user-agent: JS GraphQL
+        authorization: Basic auth einfügen

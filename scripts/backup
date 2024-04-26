@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -e
+set -u
+
+echo "Drupal backup started at $(date)"
+
+HTML_DIR=/var/www/html
+BACKUP_DIR=/var/www/backup
+
+cd ${HTML_DIR}
+echo "Dump DB to '${BACKUP_DIR}/db-dump.sql' ($(date))"
+drush sql-dump --result-file="${BACKUP_DIR}/db-dump.sql"
+
+echo "Starting config export now($(date))"
+drush config-export -y
+
+echo "Copy Drupal files directory to backup mount '${BACKUP_DIR}/file-system/files ($(date))"
+  rm -rf ${BACKUP_DIR}/file-system
+  cp -pRP ${HTML_DIR}/sites/default/files ${BACKUP_DIR}/file-system
+
+echo "Drupal backup finished at $(date)"

@@ -1,0 +1,24 @@
+query files {
+    entityQuery(
+        entityType: NODE,
+        revisions: ALL,
+        filter: { conditions: [{field: "status", value: ["0", "1"]}]}) {
+        __typename
+        items {
+            id
+            ... on NodeDemo {
+                vid
+                nid
+                status
+                moderationState
+                title
+                fieldImage {
+                    entity {
+                        filename
+                        uri
+                    }
+                }
+            }
+        }
+    }
+}

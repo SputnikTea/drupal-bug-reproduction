@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -e
+set -u
+
+echo "Drupal restore started at $(date)."
+
+RESTORE_DIR=/var/www/backup
+
+if [ ! -f ${RESTORE_DIR}/db-dump.sql ]
+then
+  echo "Cannot restore Drupal. DB dump file not found ($(date))."
+  ls -lah ${RESTORE_DIR}
+  exit 1
+fi
+
+cd /var/www/html
+
+echo "Create Drupal DB ($(date))."
+echo "DROP DATABASE d8__content_store;CREATE DATABASE d8__content_store CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;" | drush sql-cli
+
+sleep 10
+echo "Restore Drupal DB from '${RESTORE_DIR}/db-dump.sql' ($(date))."
+drush sql-cli < ${RESTORE_DIR}/db-dump.sql
+
+if [ -d ${RESTORE_DIR}/file-system/files ]
+then
+  echo "Restore Drupal files directory from '${RESTORE_DIR}/file-system/files' ($(date))."
+  mkdir -p /var/www/html/sites/default/files/
+  rsync -a ${RESTORE_DIR}/file-system/files/* /var/www/html/sites/default/files/
+
+  echo "Restored Drupal files directory ($(date))."
+  ls -lah /var/www/html/sites/default
+  ls -lah /var/www/html/sites/default/files
+else
+  echo "No Drupal files directory under '${RESTORE_DIR}/file-system/files' ($(date))."
+fi
+
+echo "Rebuild Drupal site and clear all its caches ($(date))"
+drush cache-rebuild
+if [ $? -ne 0 ]
+then
+  drush cache-rebuild
+fi
+
+echo "Drupal restore finished at $(date)"

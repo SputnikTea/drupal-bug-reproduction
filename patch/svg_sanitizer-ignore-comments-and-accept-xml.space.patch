@@ -1,0 +1,20 @@
+--- a/vendor/enshrined/svg-sanitize/src/Sanitizer.php
++++ b/vendor/enshrined/svg-sanitize/src/Sanitizer.php
+@@ -368,7 +368,7 @@
+     {
+         for ($x = $element->attributes->length - 1; $x >= 0; $x--) {
+             // get attribute name
+-            $attrName = $element->attributes->item($x)->name;
++            $attrName = $element->attributes->item($x)->nodeName;
+
+             // Remove attribute if not in whitelist
+             if (!in_array(strtolower($attrName), $this->allowedAttrs) && !$this->isAriaAttribute(strtolower($attrName)) && !$this->isDataAttribute(strtolower($attrName))) {
+@@ -653,7 +653,7 @@
+             $textNode = $currentElement->ownerDocument->createTextNode($clean_html);
+             $currentElement->parentNode->replaceChild($textNode, $currentElement);
+         // If the element doesn't have a tagname, remove it and continue with next iteration
+-        } elseif (!$currentElement instanceof \DOMElement && !$currentElement instanceof \DOMText) {
++        } elseif (!$currentElement instanceof \DOMElement && !$currentElement instanceof \DOMText && $currentElement->nodeName != '#comment') {
+             $currentElement->parentNode->removeChild($currentElement);
+             $this->xmlIssues[] = array(
+                 'message' => 'Suspicious node \'' . $currentElement->nodeName . '\'',

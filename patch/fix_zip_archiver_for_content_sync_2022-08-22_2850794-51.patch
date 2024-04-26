@@ -1,0 +1,251 @@
+diff --git a/web/core/lib/Drupal/Core/Archiver/ArchiverManager.php b/web/core/lib/Drupal/Core/Archiver/ArchiverManager.php
+index f1534aa124..08a6308a3e 100644
+--- a/web/core/lib/Drupal/Core/Archiver/ArchiverManager.php
++++ b/web/core/lib/Drupal/Core/Archiver/ArchiverManager.php
+@@ -50,7 +50,7 @@ public function __construct(\Traversable $namespaces, CacheBackendInterface $cac
+   public function createInstance($plugin_id, array $configuration = []) {
+     $plugin_definition = $this->getDefinition($plugin_id);
+     $plugin_class = DefaultFactory::getPluginClass($plugin_id, $plugin_definition, 'Drupal\Core\Archiver\ArchiverInterface');
+-    return new $plugin_class($this->fileSystem->realpath($configuration['filepath']));
++    return new $plugin_class($this->fileSystem->realpath($configuration['filepath']), $configuration);
+   }
+ 
+   /**
+diff --git a/web/core/lib/Drupal/Core/Archiver/Tar.php b/web/core/lib/Drupal/Core/Archiver/Tar.php
+index 00dd4fdf1f..aaa5d2aadc 100644
+--- a/web/core/lib/Drupal/Core/Archiver/Tar.php
++++ b/web/core/lib/Drupal/Core/Archiver/Tar.php
+@@ -21,11 +21,18 @@ class Tar implements ArchiverInterface {
+    *   The full system path of the archive to manipulate. Only local files
+    *   are supported. If the file does not yet exist, it will be created if
+    *   appropriate.
++   * @param array $configuration
++   *   (Optional) settings to open the archive with the following keys:
++   *   - 'compress': Indicates if the 'gzip', 'bz2', or 'lzma2' compression is
++   *     required.
++   *   - 'buffer_length': Length of the read buffer in bytes.
+    *
+    * @throws \Drupal\Core\Archiver\ArchiverException
+    */
+-  public function __construct($file_path) {
+-    $this->tar = new ArchiveTar($file_path);
++  public function __construct($file_path, array $configuration = []) {
++    $compress = $configuration['compress'] ?? NULL;
++    $buffer = $configuration['buffer_length'] ?? 512;
++    $this->tar = new ArchiveTar($file_path, $compress, $buffer);
+   }
+ 
+   /**
+diff --git a/web/core/lib/Drupal/Core/Archiver/Zip.php b/web/core/lib/Drupal/Core/Archiver/Zip.php
+index 835ebca15b..2f335adddd 100644
+--- a/web/core/lib/Drupal/Core/Archiver/Zip.php
++++ b/web/core/lib/Drupal/Core/Archiver/Zip.php
+@@ -23,12 +23,15 @@ class Zip implements ArchiverInterface {
+    *   The full system path of the archive to manipulate. Only local files
+    *   are supported. If the file does not yet exist, it will be created if
+    *   appropriate.
++   * @param array $configuration
++   *   (Optional) settings to open the archive with the following keys:
++   *   - 'flags': The mode to open the archive with \ZipArchive::open().
+    *
+    * @throws \Drupal\Core\Archiver\ArchiverException
+    */
+-  public function __construct($file_path) {
++  public function __construct($file_path, array $configuration = []) {
+     $this->zip = new \ZipArchive();
+-    if ($this->zip->open($file_path) !== TRUE) {
++    if ($this->zip->open($file_path, $configuration['flags'] ?? 0) !== TRUE) {
+       throw new ArchiverException("Cannot open '$file_path'");
+     }
+   }
+diff --git a/web/core/misc/cspell/dictionary.txt b/web/core/misc/cspell/dictionary.txt
+index c663c23926..28cbe343f6 100644
+--- a/web/core/misc/cspell/dictionary.txt
++++ b/web/core/misc/cspell/dictionary.txt
+@@ -721,6 +721,7 @@ lstitle
+ ltitle
+ ltlanguage
+ lundi
++lzma
+ lzop
+ maailma
+ macbinary
+diff --git a/web/core/tests/Drupal/KernelTests/Core/Archiver/ArchiverTestBase.php b/web/core/tests/Drupal/KernelTests/Core/Archiver/ArchiverTestBase.php
+new file mode 100644
+index 0000000000..759c21d73d
+--- /dev/null
++++ b/web/core/tests/Drupal/KernelTests/Core/Archiver/ArchiverTestBase.php
+@@ -0,0 +1,74 @@
++<?php
++
++namespace Drupal\KernelTests\Core\Archiver;
++
++use Drupal\KernelTests\Core\File\FileTestBase;
++use Drupal\Tests\TestFileCreationTrait;
++
++/**
++ * Base class for archive tests that adds some additional archive specific
++ * assertions and helper properties.
++ */
++abstract class ArchiverTestBase extends FileTestBase {
++  use TestFileCreationTrait;
++
++  /**
++   * The archiver plugin identifier.
++   *
++   * @var string
++   */
++  protected $archiverPluginId;
++
++  /**
++   * The file system service.
++   *
++   * @var \Drupal\Core\File\FileSystemInterface
++   */
++  protected $fileSystem;
++
++  /**
++   * {@inheritdoc}
++   */
++  protected function setUp(): void {
++    parent::setUp();
++
++    $this->fileSystem = $this->container->get('file_system');
++  }
++
++  /**
++   * Asserts an archive contains a given file.
++   *
++   * @param string $path
++   *   Absolute file path to an archived file.
++   * @param string $file
++   *   File to assert does exist within the archived file.
++   * @param array $configuration
++   *   Optional configuration to pass to the archiver plugin.
++   */
++  protected function assertArchiveContainsFile($path, $file, array $configuration = []) {
++    $configuration['filepath'] = $path;
++    /** @var \Drupal\Core\Archiver\ArchiverManager $manager */
++    $manager = $this->container->get('plugin.manager.archiver');
++    $archive = $manager->createInstance($this->archiverPluginId, $configuration);
++    $this->assertContains($file, $archive->listContents(), sprintf('The "%s" archive contains the "%s" file.', $path, $file));
++  }
++
++  /**
++   * Asserts an archive does not contain a given file.
++   *
++   * @param string $path
++   *   Absolute file path to an archived file.
++   * @param string $file
++   *   File to assert does not exist within the archived file.
++   * @param array $configuration
++   *   Optional configuration to pass to the archiver plugin.
++   */
++  protected function assertArchiveNotContainsFile($path, $file, array $configuration = []) {
++    $configuration['filepath'] = $path;
++    /** @var \Drupal\Core\Archiver\ArchiverManager $manager */
++    $manager = $this->container->get('plugin.manager.archiver');
++    $archive = $manager->createInstance($this->archiverPluginId, $configuration);
++    $this->assertNotContains($file, $archive->listContents(), sprintf('The "%s" archive does not contain the "%s" file.', $path, $file));
++  }
++
++}
+diff --git a/web/core/tests/Drupal/KernelTests/Core/Archiver/TarTest.php b/web/core/tests/Drupal/KernelTests/Core/Archiver/TarTest.php
+new file mode 100644
+index 0000000000..fda4800d47
+--- /dev/null
++++ b/web/core/tests/Drupal/KernelTests/Core/Archiver/TarTest.php
+@@ -0,0 +1,29 @@
++<?php
++
++namespace Drupal\KernelTests\Core\Archiver;
++
++use Drupal\Core\Archiver\Tar;
++
++/**
++ * @coversDefaultClass \Drupal\Core\Archiver\Tar
++ * @group tar
++ */
++class TarTest extends ArchiverTestBase {
++  /**
++   * {@inheritdoc}
++   */
++  protected $archiverPluginId = 'Tar';
++
++  /**
++   * Tests that the Tar archive is created if it does not exist.
++   */
++  public function testCreateArchive() {
++    $textFile = current($this->getTestFiles('text'));
++    $archiveFilename = $this->fileSystem->realpath('public://' . $this->randomMachineName() . '.tar');
++    $tar = new Tar($archiveFilename);
++    $tar->add($this->fileSystem->realPath($textFile->uri));
++    $this->assertFileExists($archiveFilename, 'Archive is automatically created if the file does not exist.');
++    $this->assertArchiveContainsFile($archiveFilename, $this->fileSystem->realPath($textFile->uri));
++  }
++
++}
+diff --git a/web/core/tests/Drupal/KernelTests/Core/Archiver/ZipTest.php b/web/core/tests/Drupal/KernelTests/Core/Archiver/ZipTest.php
+new file mode 100644
+index 0000000000..b9a1feb9c9
+--- /dev/null
++++ b/web/core/tests/Drupal/KernelTests/Core/Archiver/ZipTest.php
+@@ -0,0 +1,58 @@
++<?php
++
++namespace Drupal\KernelTests\Core\Archiver;
++
++use Drupal\Core\Archiver\Zip;
++
++/**
++ * @coversDefaultClass \Drupal\Core\Archiver\Zip
++ * @group zip
++ */
++class ZipTest extends ArchiverTestBase {
++  /**
++   * {@inheritdoc}
++   */
++  protected $archiverPluginId = 'Zip';
++
++  /**
++   * Tests that the Zip archive is created if it does not exist.
++   */
++  public function testCreateArchive() {
++    $textFile = current($this->getTestFiles('text'));
++    $archiveFilename = $this->fileSystem->realpath('public://' . $this->randomMachineName() . '.zip');
++    $zip = new Zip($archiveFilename, [
++      'flags' => \ZipArchive::CREATE,
++    ]);
++    $zip->add($this->fileSystem->realPath($textFile->uri));
++    // Close the archive and make sure it is written to disk.
++    $this->assertTrue($zip->getArchive()->close(), 'Successfully closed archive.');
++    $this->assertFileExists($archiveFilename, 'Archive is automatically created if the file does not exist.');
++    $this->assertArchiveContainsFile($archiveFilename, $this->fileSystem->realPath($textFile->uri));
++  }
++
++  /**
++   * Tests that the Zip archiver is created and overwritten.
++   */
++  public function testOverwriteArchive() {
++    // Create an archive similarly to how it's done in ::testCreateArchive.
++    $files = $this->getTestFiles('text');
++    $textFile = current($files);
++    $archiveFilename = $this->fileSystem->realpath('public://' . $this->randomMachineName() . '.zip');
++    $zip = new Zip($archiveFilename, [
++      'flags' => \ZipArchive::CREATE,
++    ]);
++    $zip->add($this->fileSystem->realPath($textFile->uri));
++    $zip->getArchive()->close();
++    $this->assertArchiveContainsFile($archiveFilename, $this->fileSystem->realPath($textFile->uri));
++    // Overwrite the zip with just a new text file.
++    $secondTextFile = next($files);
++    $zip = new Zip($archiveFilename, [
++      'flags' => \ZipArchive::OVERWRITE,
++    ]);
++    $zip->add($this->fileSystem->realpath($secondTextFile->uri));
++    $zip->getArchive()->close();
++    $this->assertArchiveNotContainsFile($archiveFilename, $this->fileSystem->realPath($textFile->uri));
++    $this->assertArchiveContainsFile($archiveFilename, $this->fileSystem->realPath($secondTextFile->uri));
++  }
++
++}

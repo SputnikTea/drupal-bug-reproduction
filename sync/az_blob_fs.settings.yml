@@ -1,0 +1,12 @@
+_core:
+  default_config_hash: MqYS2rOcZ9Ca1gPQWwdRzc79ZsQO5rVpHXPzbAGvtTM
+az_blob_account_name: account1
+az_blob_protocol: http
+az_blob_container_name: cms-public-files
+az_blob_cdn_host_name: ''
+az_blob_local_ip: 0.0.0.0
+az_blob_local_port: '10000'
+az_blob_local_emulator: 1
+az_blob_account_key_name: azure_storage_account_key
+az_blob_initial_image_styles: {  }
+az_blob_queue_image_styles: {  }

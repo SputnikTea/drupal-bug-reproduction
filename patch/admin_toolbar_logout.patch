@@ -1,0 +1,15 @@
+--- a/web/modules/contrib/admin_toolbar/admin_toolbar_tools/src/Plugin/Derivative/ExtraLinks.php	2023-10-19 12:00:12
++++ b/web/modules/contrib/admin_toolbar/admin_toolbar_tools/src/Plugin/Derivative/ExtraLinks.php	2023-10-19 12:01:03
+@@ -242,12 +242,6 @@
+       'title' => $this->t('Roles'),
+       'route_name' => 'entity.user_role.collection',
+       'parent' => 'entity.user.collection',
+-    ] + $base_plugin_definition;
+-    $links['user.logout'] = [
+-      'title' => $this->t('Logout'),
+-      'route_name' => 'user.logout',
+-      'parent' => 'admin_toolbar_tools.help',
+-      'weight' => 10,
+     ] + $base_plugin_definition;
+     $links['user.role_add'] = [
+       'title' => $this->t('Add role'),

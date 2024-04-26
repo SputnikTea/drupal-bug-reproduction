@@ -1,0 +1,25 @@
+From b2d6ec3e5e5388df32b0ec537e0e6f3d24c297f4 Mon Sep 17 00:00:00 2001
+From: Alexey Murz Korepov <murznn@gmail.com>
+Date: Fri, 6 Aug 2021 13:55:06 +0300
+Subject: [PATCH] Remove line causing a notice when query executed
+
+Quick fix for #1229 issue.
+---
+ modules/contrib/graphql/src/Routing/QueryRouteEnhancer.php | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/web/modules/contrib/graphql/src/Routing/QueryRouteEnhancer.php b/web/modules/contrib/graphql/src/Routing/QueryRouteEnhancer.php
+index 1bfe27f..d57e8ad 100644
+--- a/web/modules/contrib/graphql/src/Routing/QueryRouteEnhancer.php
++++ b/web/modules/contrib/graphql/src/Routing/QueryRouteEnhancer.php
+@@ -31,7 +31,6 @@ class QueryRouteEnhancer implements EnhancerInterface {
+     // graphql processor due to a missing query string but at least provides
+     // the right format for the client to act upon.
+     return $defaults + [
+-      '_controller' => $defaults['_graphql']['single'],
+       'operations' => $operations,
+     ];
+   }
+--
+2.27.0
+

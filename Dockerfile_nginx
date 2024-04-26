@@ -1,0 +1,20 @@
+ARG  DRUPAL_IMAGE
+# we need a multi stage build because copy --from does not work with build args in kaniko
+FROM ${DRUPAL_IMAGE} as drupal-image
+
+FROM nginxinc/nginx-unprivileged:1.20-alpine
+
+USER 0
+RUN apk update && apk upgrade
+USER 101
+
+# copy Drupal files to be statically served by nginx
+COPY \
+    --from=drupal-image \
+    /opt/drupal/web \
+    /var/www/html
+
+COPY config/nginx_config/local-compose-nginx.conf /etc/nginx/conf.d/default.conf
+
+
+EXPOSE 8080
