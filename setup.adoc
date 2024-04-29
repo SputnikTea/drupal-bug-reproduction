@@ -1,15 +1,7 @@
 = Drupal Deployment
 :toc:
 
-This document describes how Drupal is deployed to Kubernetes using azure pipelines
-
-== Steps to reproduce bug
-
-*To be done*
-
-Maybe https://medium.com/we-are-testers/chapter-4-how-to-write-clear-and-efficient-steps-to-reproduce-in-your-bug-report-d96039a1c77d[this article] can help
-
-
+This document describes how this localhost setup works and how to use it.
 
 == Important Files / Project Structure
 
